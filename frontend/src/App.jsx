@@ -1,8 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import CreateRecipe from './pages/CreateRecipe';
-import Home from './pages/Home';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
+import CreateRecipe from './pages/CreateRecipe.jsx';
+import RecipeDetails from './pages/RecipeDetails.jsx';
+
+
+function Home() {
+  const [recipes, setRecipes] = import('react').then(r => r.useState([]));
+  
+  return <div style={{textAlign: 'center', marginTop: '50px'}}>Welcome to the Feed</div>;
+}
 
 function App() {
   const user = JSON.parse(localStorage.getItem('profile'));
@@ -14,10 +21,6 @@ function App() {
 
   return (
     <Router>
-      {/* FIX 1: Main Container.
-         Changed: Removed margin, changed width to 100%, and minHeight to 100vh.
-         This makes the background color cover the entire screen from edge-to-edge.
-      */}
       <div style={{ 
         backgroundColor: '#030303', 
         minHeight: '100vh', 
@@ -26,11 +29,6 @@ function App() {
         margin: 0, 
         padding: 0 
       }}>
-        
-        {/* FIX 2: Navigation Bar.
-           Changed: Changed width to 100% and set padding for side indents.
-           This makes the dark nav bar span the entire top of the screen.
-        */}
         <nav style={{ 
           height: '56px', 
           padding: '0 40px', 
@@ -74,16 +72,13 @@ function App() {
           </div>
         </nav>
 
-        {/* FIX 3: Content Column.
-           Changed: Added a wrapper <div> with a maxWidth to keep the feed centered.
-           This ensures the recipes don't stretch too wide on large monitors.
-        */}
-        <div style={{ maxWidth: '640px', margin: '0 auto', padding: '20px' }}>
+        <div style={{ maxWidth: '100%', margin: '0 auto' }}>
           <Routes>
-            <Route path="/" element={<Home />} />
+             {/* We use the Home logic you already have in your repo */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/create" element={<CreateRecipe />} />
+            <Route path="/recipe/:id" element={<RecipeDetails />} />
           </Routes>
         </div>
       </div>
