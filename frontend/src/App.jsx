@@ -1,23 +1,48 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import API from './api';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
 import RecipeDetails from './pages/RecipeDetails.jsx';
 
-
+// --- HOME FEED COMPONENT ---
 function Home() {
-  const [recipes, setRecipes] = import('react').then(r => r.useState([]));
-  
-  return <div style={{textAlign: 'center', marginTop: '50px'}}>Welcome to the Feed</div>;
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await API.get('/api/recipes');
+        setRecipes(response.data);
+        setLoading(false);
+      } catch (error) { 
+        console.error("Error:", error);
+        setLoading(false); 
+      }
+    };
+    fetchRecipes();
+  }, []);
+
+  return (
+    <div style={{ maxWidth: '640px', margin: '0 auto', padding: '20px' }}>
+      {loading ? <p>Loading...</p> : recipes.map(recipe => (
+        <Link to={`/recipe/${recipe._id}`} key={recipe._id} style={{ textDecoration: 'none' }}>
+          <div style={{ backgroundColor: '#1A1A1B', borderBottom: '1px solid #343536', padding: '20px', marginBottom: '10px' }}>
+            <h3 style={{ color: '#D7DADC' }}>{recipe.title}</h3>
+            <p style={{ color: '#818384' }}>{recipe.description}</p>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
 }
 
+// --- MAIN APP ---
 function App() {
   const user = JSON.parse(localStorage.getItem('profile'));
-
-  const handleLogout = () => { 
-    localStorage.clear(); 
-    window.location.href = '/'; 
-  };
+  const handleLogout = () => { localStorage.clear(); window.location.href = '/'; };
 
   return (
     <Router>
@@ -25,62 +50,31 @@ function App() {
         backgroundColor: '#030303', 
         minHeight: '100vh', 
         color: '#D7DADC', 
-        fontFamily: 'sans-serif', 
         margin: 0, 
         padding: 0 
       }}>
         <nav style={{ 
-          height: '56px', 
-          padding: '0 40px', 
-          backgroundColor: '#1A1A1B', 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          borderBottom: '1px solid #343536', 
-          position: 'sticky', 
-          top: 0, 
-          zIndex: 100,
-          width: '100%',
-          boxSizing: 'border-box'
+          height: '56px', backgroundColor: '#1A1A1B', display: 'flex', 
+          justifyContent: 'space-between', alignItems: 'center',
+          padding: '0 40px', borderBottom: '1px solid #343536'
         }}>
-          <Link to="/" style={{ color: '#D7DADC', textDecoration: 'none', fontWeight: '800', fontSize: '20px' }}>
-            LET HIM COOK
-          </Link>
-          
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <Link to="/" style={{ color: '#D7DADC', textDecoration: 'none', fontWeight: 'bold' }}>LET HIM COOK</Link>
+          <div>
             {!user ? (
-              <>
-                <Link to="/login" style={{ color: '#D7DADC', textDecoration: 'none', fontSize: '14px' }}>Log In</Link>
-                <Link to="/register" style={{ 
-                  color: '#030303', 
-                  backgroundColor: '#D7DADC', 
-                  padding: '6px 18px', 
-                  borderRadius: '20px', 
-                  textDecoration: 'none', 
-                  fontSize: '14px', 
-                  fontWeight: 'bold' 
-                }}>Sign Up</Link>
-              </>
+              <Link to="/login" style={{ color: '#D7DADC', textDecoration: 'none' }}>Log In</Link>
             ) : (
-              <>
-                <Link to="/create" style={{ color: '#D7DADC', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}>+ Create</Link>
-                <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#818384', cursor: 'pointer', fontSize: '12px' }}>
-                  Logout ({user.result.username})
-                </button>
-              </>
+              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#818384' }}>Logout</button>
             )}
           </div>
         </nav>
 
-        <div style={{ maxWidth: '100%', margin: '0 auto' }}>
-          <Routes>
-             {/* We use the Home logic you already have in your repo */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/create" element={<CreateRecipe />} />
-            <Route path="/recipe/:id" element={<RecipeDetails />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/create" element={<CreateRecipe />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
+        </Routes>
       </div>
     </Router>
   );
