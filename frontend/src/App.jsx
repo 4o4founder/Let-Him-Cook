@@ -6,7 +6,7 @@ import Register from './pages/Register.jsx';
 import CreateRecipe from './pages/CreateRecipe.jsx';
 import RecipeDetails from './pages/RecipeDetails.jsx';
 
-// --- HOME FEED COMPONENT ---
+// --- HOME FEED COMPONENT (Defined here to avoid import errors) ---
 function Home() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ function Home() {
         setRecipes(response.data);
         setLoading(false);
       } catch (error) { 
-        console.error("Error:", error);
+        console.error("Error fetching recipes:", error);
         setLoading(false); 
       }
     };
@@ -27,14 +27,24 @@ function Home() {
 
   return (
     <div style={{ maxWidth: '640px', margin: '0 auto', padding: '20px' }}>
-      {loading ? <p>Loading...</p> : recipes.map(recipe => (
-        <Link to={`/recipe/${recipe._id}`} key={recipe._id} style={{ textDecoration: 'none' }}>
-          <div style={{ backgroundColor: '#1A1A1B', borderBottom: '1px solid #343536', padding: '20px', marginBottom: '10px' }}>
-            <h3 style={{ color: '#D7DADC' }}>{recipe.title}</h3>
-            <p style={{ color: '#818384' }}>{recipe.description}</p>
-          </div>
-        </Link>
-      ))}
+      {loading ? (
+        <p style={{ textAlign: 'center', color: '#818384' }}>Loading feed...</p>
+      ) : (
+        recipes.map((recipe) => (
+          <Link to={`/recipe/${recipe._id}`} key={recipe._id} style={{ textDecoration: 'none' }}>
+            <div style={{ 
+              backgroundColor: '#1A1A1B', 
+              borderBottom: '1px solid #343536', 
+              padding: '20px',
+              marginBottom: '10px',
+              borderRadius: '4px'
+            }}>
+              <h3 style={{ color: '#D7DADC', margin: '0 0 10px 0' }}>{recipe.title}</h3>
+              <p style={{ color: '#D7DADC', fontSize: '14px' }}>{recipe.description}</p>
+            </div>
+          </Link>
+        ))
+      )}
     </div>
   );
 }
@@ -54,16 +64,16 @@ function App() {
         padding: 0 
       }}>
         <nav style={{ 
-          height: '56px', backgroundColor: '#1A1A1B', display: 'flex', 
-          justifyContent: 'space-between', alignItems: 'center',
-          padding: '0 40px', borderBottom: '1px solid #343536'
+          height: '56px', padding: '0 40px', backgroundColor: '#1A1A1B', 
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          borderBottom: '1px solid #343536', width: '100%', boxSizing: 'border-box'
         }}>
           <Link to="/" style={{ color: '#D7DADC', textDecoration: 'none', fontWeight: 'bold' }}>LET HIM COOK</Link>
-          <div>
+          <div style={{ display: 'flex', gap: '20px' }}>
             {!user ? (
               <Link to="/login" style={{ color: '#D7DADC', textDecoration: 'none' }}>Log In</Link>
             ) : (
-              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#818384' }}>Logout</button>
+              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#818384', cursor: 'pointer' }}>Logout</button>
             )}
           </div>
         </nav>
