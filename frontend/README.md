@@ -2,7 +2,7 @@
 
 A modern, full-stack, Reddit-inspired culinary community platform designed for seamless recipe sharing, authenticated user interactions, and decentralized recipe discovery. Built with a unified JavaScript ecosystem using the MERN stack.
 
-🌐 **Live Demo:** [let-him-cook.vercel.app](https://let-him-cook.vercel.app)
+🌐 **Live Demo:** [https://let-him-cook-mauve.vercel.app](https://let-him-cook-mauve.vercel.app)
 
 ---
 
